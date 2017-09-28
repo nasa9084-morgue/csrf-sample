@@ -41,6 +41,8 @@ username: %s, password: %s<br />
 <form action="/update" method="POST">
 <label>Password: <input name="password" type="password"></label>
 <input type="submit" value="register">
+
+<input type="hidden" name="csrf-token" value="%s">
 </form>
 </body>
 </html>`
@@ -199,15 +201,21 @@ func userPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateHandler(w http.ResponseWriter, r *http.Request) {
+	csrfToken := `someRandomToken`
 	switch r.Method {
 	case `GET`:
 		_, ok := session(r)
 		if !ok {
 			return
 		}
-		w.Write([]byte(updateHTML))
+		w.Write([]byte(fmt.Sprintf(updateHTML, "someRandomToken")))
 		return
 	case `POST`:
+		tk := r.FormValue(`csrf-token`)
+		if tk != csrfToken {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
 		db, err := bolt.Open("bolt.db", 0600, nil)
 		if err != nil {
 			errorResponse(w, http.StatusInternalServerError, err)
